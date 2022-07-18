@@ -61,7 +61,12 @@ class cluster():
                 fid.write('error  = error.txt\n')
                 fid.write('output = output.txt\n')
                 fid.write('log  = log.txt\n')
-
+                # if user has defined a htc_job_flavor in config.yaml otherwise default is "espresso"
+                if "htc_job_flavor" in list_of_nodes[0].root.parameters['generations'][str(list_of_nodes[0].depth)]:
+                    htc_job_flavor = (list_of_nodes[0]
+                              	      .root
+                              	      .parameters["generations"][str(list_of_nodes[0].depth)]["htc_job_flavor"])
+                    fid.write(f'+JobFlavour  = "{htc_job_flavor}"\n')
             for node in list_of_nodes:
                 if node.has_been('completed'):
                     print(f'{node.get_abs_path()} is completed.')
@@ -78,6 +83,9 @@ class cluster():
                                 # "-e error.txt -o output.txt "
                                  f"{node.get_abs_path()}/run.sh\n")
                     elif self.run_on == 'htc':
+                        # initialdir is needed so that each job has it own output, error and log.txt
+                        fid.write( "initialdir = "
+                                  f"{node.get_abs_path()}\n")
                         fid.write( "executable = "
                                   f"{node.get_abs_path()}/run.sh\n"
                                    "queue\n" )
@@ -87,7 +95,7 @@ class cluster():
             elif self.run_on == 'lsf':
                 fid.write(f'#{self.run_on}\n')
             elif self.run_on == 'htc':
-                pass
+                fid.write(f'#{self.run_on}\n')
 
     def submit(self, filename):
         if self.run_on == 'local_pc':
@@ -95,22 +103,23 @@ class cluster():
         elif self.run_on == 'lsf':
             os.system(f'bash {filename}')
         elif self.run_on == 'htc':
-            pass
+            os.system(f'condor_submit {filename}')
 
     def running_jobs(self):
         # for local jobs
         # ps -ef | grep "run.sh" | grep -v grep
         my_list = []
         if self.run_on == 'local_pc':
-            for ps in psutil.pids():
-                aux=psutil.Process(ps).cmdline()
-                if len(aux)>1:
-                    if 'run.sh' in aux[-1]:
-                        my_list.append(str(Path(psutil
-                                                .Process(ps)
-                                                .cmdline()[-1])
-                                           .parent))
-
+            # Does not work at the moment in lxplus
+            #for ps in psutil.pids():
+            #    aux=psutil.Process(ps).cmdline()
+            #    if len(aux)>1:
+            #        if 'run.sh' in aux[-1]:
+            #            my_list.append(str(Path(psutil
+            #                                    .Process(ps)
+            #                                    .cmdline()[-1])
+            #                               .parent))
+            return []
 
             return my_list
         elif self.run_on == 'lsf':

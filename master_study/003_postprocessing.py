@@ -55,7 +55,7 @@ if root.has_been('completed'):
             my_list.append(df)
 
     my_df = pd.concat(my_list)
-    aux = my_df[my_df['state']==0] # unstable
+    aux = my_df[my_df['state']!=1] # unstable
     print(pd.DataFrame([aux.groupby('name 1')['normalized amplitude in xy-plane'].min(),
                         aux.groupby('name 1')['q1'].mean(),
                         aux.groupby('name 1')['q2'].mean()

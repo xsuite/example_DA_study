@@ -13,13 +13,15 @@
       files_to_clone: # relative to the template folder
         - optics_specific_tools.py
         - clean_it.sh
-      run_on: 'local_pc'
+      run_on: 'htc'
+      htc_job_flavor: 'microcentury' # optional parameter to define job flavor, default is espresso
     3: # Launch the tracking
       job_folder: 'master_jobs/002_tracking_job'
       job_executable: 000_track.py # has to be a python file
       files_to_clone: # relative to the template folder
         - clean_it.sh
-      run_on: 'local_pc'
+      run_on: 'htc'
+      htc_job_flavor: 'tomorrow' # optional parameter to define job flavor, default is espress
   use_yaml_children: true
   # first generation
   children:

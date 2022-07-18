@@ -9,6 +9,7 @@ import itertools
 import numpy as np
 import yaml
 from user_defined_functions import generate_run_sh
+from user_defined_functions import generate_run_sh_htc
 
 # Import the configuration
 config=yaml.safe_load(open('config.yaml'))
@@ -46,6 +47,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 # From python objects we move the nodes to the file-system.
 start_time = time.time()
-root.make_folders(generate_run_sh)
+#root.make_folders(generate_run_sh)
+root.make_folders(generate_run_sh_htc)
 print('The tree folders are ready.')
 print("--- %s seconds ---" % (time.time() - start_time))
